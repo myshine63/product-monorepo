@@ -1,0 +1,37 @@
+# Dependencies and package manager caches
+node_modules/
+.pnpm-store/
+
+# Build output and caches
+dist/
+.next/
+out/
+.turbo/
+.cache/
+*.tsbuildinfo
+.eslintcache
+
+# Test output
+coverage/
+playwright-report/
+test-results/
+
+# Local environment files (keep templates)
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# IDE and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Local deployment metadata
+.vercel/
