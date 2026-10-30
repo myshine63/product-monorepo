@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
-import { Providers } from '@/components/providers';
+import { AntdDesignProvider } from '@/components/providers/AntdDesignProvider';
 import 'antd/dist/reset.css';
 import './globals.css';
 
@@ -13,7 +13,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="zh-CN">
       <body>
-        <AntdRegistry><Providers>{children}</Providers></AntdRegistry>
+        <AntdRegistry><AntdDesignProvider>{children}</AntdDesignProvider></AntdRegistry>
       </body>
     </html>
   );

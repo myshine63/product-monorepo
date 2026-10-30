@@ -31,7 +31,7 @@ pnpm dev               # 同时启动前端和后台
 ```
 
 前端地址为 http://localhost:3000，后台默认监听 3001 端口。
-当前前端为空白页面，后台保留启动模块，尚未注册业务接口。
+当前前端为空白页面；后台已实现用户注册、登录、七天滑动会话与角色鉴权。
 Ant Design 已配置中文语言和服务端样式，Zustand 已安装，尚未创建业务 store。
 
 也可以分别使用 `pnpm dev:web` 和 `pnpm dev:backend` 启动。
@@ -39,6 +39,8 @@ Ant Design 已配置中文语言和服务端样式，Zustand 已安装，尚未�
 前端通过 Next.js rewrite 将 `/api/*` 代理到后台，浏览器请求保持同源。
 默认后台地址是 `http://localhost:3001`；如需修改，将 `apps/product-web/.env.example`
 复制为同目录的 `.env.local` 并调整 `API_URL`，修改后重启前端。
+首次启动后台前，在 `apps/product-backend/.env` 填写数据库与超级管理员配置，
+然后执行 `pnpm db:init` 建表并创建超级管理员。
 后台通过 `@nestjs/config` 自动加载 `apps/product-backend/.env`，
 可复制同目录的 `.env.example` 创建本地配置。`PORT` 默认值为 3001，必须为 1–65535 的整数；
 外部环境变量优先于 `.env`，也可通过 `PORT=3002 pnpm dev:backend` 修改端口。
@@ -67,7 +69,8 @@ pnpm --filter product-web start
 构建缓存包含 `dist` 和 Next.js 生产产物，排除 Next.js 内部缓存与开发产物。
 根 TypeScript 配置、工作区源码、`.env*` 文件以及构建环境变量 `API_URL`、`NODE_ENV`
 的变化会影响构建缓存。新增构建时环境变量应在 `turbo.json` 的 `env` 中声明。
-开发任务透传 `API_URL`、`PORT`、`NODE_ENV`；如 `PORT=3002 pnpm dev:backend`。
+开发任务透传 `API_URL`、`PORT`、`NODE_ENV` 及数据库 `DB_*` 配置；
+如 `PORT=3002 pnpm dev:backend`。
 `.turbo/` 和 Next.js 自动生成的 `next-env.d.ts` 已被 Git 忽略。
 类型检查缓存会保存前端生成的类型文件，清理后再次检查也会恢复这些文件。
 
@@ -80,3 +83,14 @@ pnpm --filter product-web start
 新增公共数据类型时放入 `packages/product-interface/src/`，从 `index.ts` 使用 `export type` 导出，
 消费者使用 `import type` 引用。该包直接暴露源码类型入口，无需预构建；构建时仅生成声明文件。
 当前所有包均为 `private`。
+
+## 用户认证
+
+- `POST /api/auth/register`：注册普通用户，初始积分 10000。
+- `POST /api/auth/login`：使用 `account`（用户名或邮箱）和 `password` 登录，返回用户和 token。
+- `GET /api/auth/me`：使用 Bearer token 获取用户信息并将有效期续至 7 天后。
+- `POST /api/auth/logout`：立即撤销当前 token。
+
+角色包括 `user`、`admin`、`super_admin`；超级管理员通过 `pnpm db:init` 创建。
+`pnpm test:backend` 运行使用真实 MySQL 的认证集成测试。
+完整请求格式、权限配置和会话规则见 [后台文档](apps/product-backend/README.md)。

@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { validateEnvironment } from './config/environment';
+import { DatabaseModule } from './database/database.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      validate: (env: Record<string, unknown>) => {
-        const port = Number(env.PORT ?? 3001);
-        if (!Number.isInteger(port) || port < 1 || port > 65535) {
-          throw new Error('PORT must be an integer between 1 and 65535');
-        }
-        return { ...env, PORT: port };
-      },
-    }),
+    ConfigModule.forRoot({ isGlobal: true, validate: validateEnvironment }),
+    ThrottlerModule.forRoot([{ ttl: 60000, limit: 120 }]),
+    DatabaseModule,
+    AuthModule,
   ],
+  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}

@@ -2,7 +2,8 @@
 
 前后端共享的 TypeScript 数据类型包，仅声明和导出类型，不包含运行时代码。
 
-当前保留空类型入口。新增公共数据类型后，从 `src/index.ts` 使用 `export type` 导出，
+目前导出 `UserRole`、`UserInfo`、`RegisterRequest`、`LoginRequest`、`SessionInfo` 和 `LoginResponse`。
+新增公共数据类型后，从 `src/index.ts` 使用 `export type` 导出，
 前后端通过 `import type` 引用；框架相关类型保留在对应应用中。
 
 工作区消费者通过 `workspace:*` 声明依赖。类型入口直接指向 `src/index.ts`，
