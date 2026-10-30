@@ -10,14 +10,17 @@
     "pnpm": ">=12"
   },
   "scripts": {
-    "build": "pnpm -r --if-present run build",
-    "typecheck": "pnpm -r --if-present run typecheck",
-    "clean": "pnpm -r --if-present run clean",
-    "dev": "pnpm --parallel --filter product-web --filter product-backend run dev",
-    "dev:web": "pnpm --filter product-web dev",
-    "dev:backend": "pnpm --filter product-backend dev"
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean",
+    "dev": "turbo run dev",
+    "dev:web": "turbo run dev --filter=product-web",
+    "dev:backend": "turbo run dev --filter=product-backend",
+    "build:web": "turbo run build --filter=product-web",
+    "build:backend": "turbo run build --filter=product-backend"
   },
   "devDependencies": {
+    "turbo": "^2.11.10",
     "typescript": "^5.9.3"
   }
 }
